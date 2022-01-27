@@ -1,0 +1,24 @@
+@startuml
+
+skinparam Style strictuml
+
+title generate API Alerts
+
+actor "CLI Utility" as cu
+participant generateAlert as ga
+participant getSymbols as gs
+participant getPricefeed as gpf
+participant getClosingData as gcd
+participant getAverage as gav
+participant getStandardDeviation as gsd
+participant getRelativeStandardDeviation as grsd
+
+cu --> ga : ./main.py -c <currency> -d <deviation>
+ga --> gs : get SYMBOLS from /v1/symbols
+ga --> gpf : calculate current price using /v1/pricefeed
+ga --> gav : use /v2/ticker/:symbol to calculate 24hr_average
+ga --> gsd : use /v2/ticker/:symbol to calculate standard_deviation
+gav --> grsd : use 24hr_average, standard_deviation to calculate percentage relative standard deviation
+gsd --> grsd
+ga --> cu : print output if standard_deviation percentage is more than INPUT -d
+@enduml
